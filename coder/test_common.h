@@ -17,6 +17,19 @@ void printf_array_int(array_type& ls)
     std::cout << std::endl;
 }
 
+template<typename array_type>
+void printf_array_int(typename array_type::iterator it, int cnt)
+{
+    int i = 0;
+    while(i < cnt)
+    {
+        std::cout << *it << "; ";
+        it++;
+        i++;
+    }
+    
+    std::cout << std::endl;
+}
 
 template<typename array_type>
 bool is_asc_array_int(array_type& ls)//升序
