@@ -36,13 +36,14 @@ bool is_asc_array_int(array_type& ls)//升序
 {
     int fail_index = 0;
     auto index = ls.begin();
-    auto nex = index+1;
-    while(nex != ls.end())
+    auto next = index;
+    next++;
+    while(next != ls.end())
     {
-        if(*index < *nex)
+        if(*index < *next)
         {
             index ++;
-            nex ++;
+            next ++;
             fail_index ++;
             continue;
         }
