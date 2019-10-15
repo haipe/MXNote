@@ -37,7 +37,19 @@ struct Student
 
 bool operator <= (const Student& l, const Student& r)
 {
-    return l.less_than_college(r) && l.less_than_department(r) && l.less_than_number(r);
+    if(l.college == r.college && l.department == r.department && l.number == r.number)
+        return true;
+
+    if(l.college < r.college)
+        return true;
+    
+    if(l.college == r.college && l.department < r.department)
+        return true;
+        
+    if(l.college == r.college && l.department == r.department && l.number < r.number)
+        return true;
+
+    return false;
 }
 
 std::ostream& operator << (std::ostream& os, const Student &s)
@@ -101,6 +113,8 @@ int quick_sort(
         *left_cp = key;
     }
 
+    //printf_array_student(ls);
+    //std::cout << "========= " << std::endl;  
     //递归把左边和右边的，继续做快速排序
     if(left != left_cp)
         run_cnt += quick_sort(ls, left, --left_cp, less_than_function);
@@ -200,6 +214,35 @@ int main()
     }
 
     printf_array_student(ls);
- 
+
+    ls = {
+        {1,1,100},
+        {2,2,1},
+        {3,3,300},
+        {1,1,101},
+        {1,2,99},
+        {2,2,222},
+        {2,1,222},
+        {3,1,11}
+    };
+
+    //一次比较出Student的大小，一次排序解决
+    left = ls.begin();
+    right = ls.end();
+    right--;
+    //先按照院排序
+    quick_sort(
+        ls,
+        left,
+        right,
+        [](const Student& l, const Student& r)
+        {
+            bool ret = l <= r;
+            //std::cout << "l: " <<l << (ret ? "<=" : ">") << r <<std::endl; 
+            return ret;
+        });
+
+    printf_array_student(ls);
+
     return 0;
 }
