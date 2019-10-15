@@ -200,6 +200,6 @@ int main()
     }
 
     printf_array_student(ls);
-
+ 
     return 0;
 }

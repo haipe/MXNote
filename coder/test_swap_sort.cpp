@@ -85,7 +85,7 @@ int main()
 {
     int run_cnt = 0;
     std::cout << "swap sort ---------" << std::endl;
-    list_int ls = ls_data;//{2,4,1,6,8,7,9,3,5,0};
+    list_int ls = {2,4,1,6,8,7,9,3,5,0};
     run_cnt = bubble_sort(ls);
     std::cout << "run count :" << run_cnt << std::endl;
     //printf_array_int(ls);
