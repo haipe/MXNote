@@ -1,4 +1,4 @@
-#include "test_common.h"
+#include "sort_common.h"
 
 //冒泡排序
 template<typename array_type>
