@@ -38,10 +38,13 @@ protected:
 
     void open_note();
 
+    void rename_note();
+
     void delete_note();
 
 protected slots:
     void slot_list_entered(const QModelIndex &index);
+    void slot_title_changed(const QString &title);
 
 private:
     Ui::MXNoteClass ui;

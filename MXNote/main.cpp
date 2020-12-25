@@ -2,7 +2,7 @@
 #include <QtWidgets/QApplication>
 #include <QSharedMemory>
 #include <QMessageBox>
-#include "QHotkey"
+#include <QHotkey>
 
 #define START_BACKGROUND
 

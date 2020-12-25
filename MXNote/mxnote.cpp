@@ -17,14 +17,13 @@
 
 #include <QDateTime>
 
-#define MXNNOTE_NOTE_NAME   "mxnote.note"
-#define MXNNOTE_CACHE_NAME  "mxnote.cache"
+#include "mx-common.h"
+
 
 MXNote::MXNote(QWidget *parent)
     : QMainWindow(parent)
 {
-    //QStringList folders = QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
     QDir().mkpath(folder + "note/");
 
     ui.setupUi(this);
@@ -54,6 +53,7 @@ MXNote::MXNote(QWidget *parent)
     ui.listView->setVisible(false);
 
     QObject::connect(ui.listView,SIGNAL(pressed(const QModelIndex &)),this,SLOT(slot_list_entered(const QModelIndex &)));
+    QObject::connect(ui.listView,SIGNAL(windowTitleChanged(const QString &)),this,SLOT(slot_title_changed(const QString &)));
 }
 
 MXNote::~MXNote()
@@ -176,6 +176,7 @@ bool MXNote::eventFilter(QObject *obj, QEvent *event)
             }
             else if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
             {
+                qDebug() << "enter";
                 //selected
                 if(ui.listView->isVisible())
                 {
@@ -215,9 +216,9 @@ bool MXNote::eventFilter(QObject *obj, QEvent *event)
 
 void MXNote::load()
 {
-    qDebug() << QCoreApplication::applicationDirPath();
+    qDebug() << "app:" << QCoreApplication::applicationDirPath();
 
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
 
     QFile file(folder + "note.json");
     if(file.exists() && file.open(QFile::ReadOnly))
@@ -262,7 +263,7 @@ void MXNote::load()
 
 void MXNote::load_note()
 {
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
     QString noteFolder = folder + "note/";
 
     if(!m_current_note_name.isEmpty())
@@ -291,7 +292,7 @@ void MXNote::load_note()
 
 void MXNote::save()
 {
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
 
     // 构建 JSON 数组
     QJsonArray jsonArray;
@@ -339,7 +340,7 @@ void MXNote::save_note(bool toCache)
     bool isClosedStatus = !ui.textEdit->isVisible();//关闭状态
 
     //qDebug() << "MXNote::save_note " << toCache << ", note:" << m_current_note_name << ",status:" << isClosedStatus;
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
     QString noteFolder = folder + "note/";
     if (toCache)
     {
@@ -391,7 +392,7 @@ void MXNote::create_note()
     NotePtr note(new Note);
 
     QDateTime now = QDateTime::currentDateTime();
-    note->title = "new " + now.toString("hh:mm:ss");
+    note->title = "note " + now.toString("hh:mm:ss");
 
     int newIndex = m_list_model->rowCount();
     m_list_model->insertRow(newIndex);
@@ -414,7 +415,7 @@ void MXNote::create_note()
 
 void MXNote::open_note()
 {
-    QString folder = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/";
+    QString folder = APP_DATA_FOLDER + "/";
     QString noteFolder = folder + "note/";
 
     int row = ui.listView->currentIndex().row();
@@ -425,6 +426,17 @@ void MXNote::open_note()
     m_current_note_name = m_all_note[row]->name;
 
     load_note();
+}
+
+void MXNote::rename_note()
+{
+    int row = ui.listView->currentIndex().row();
+    if(row >= m_all_note.count())
+        return;
+
+    QModelIndex index = m_list_model->index(row);
+    QString title = m_list_model->data(index).toString();
+    qDebug() << "new name:" << title << ", old:" << m_current_note_title;
 }
 
 void MXNote::delete_note()
@@ -438,5 +450,11 @@ void MXNote::delete_note()
 
 void MXNote::slot_list_entered(const QModelIndex &index)
 {
-    //qDebug() << index;
+    qDebug() << index;
+}
+
+void MXNote::slot_title_changed(const QString &title)
+{
+    qDebug() << title;
+
 }

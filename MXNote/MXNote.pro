@@ -16,13 +16,15 @@ SOURCES += main.cpp\
     mxnote.cpp
 
 HEADERS  += \
+    mx-common.h \
     mxnote.h
 
 FORMS    += mxnote.ui
 
 #------------------------------------------------------
 #QHotkey
-INCLUDEPATH += $(PWD)../QHotkey/
+
+INCLUDEPATH += ../QHotkey/
 
 HEADERS  += ../QHotkey/QHotkey \
     ../QHotkey/qhotkey.h \
@@ -30,8 +32,8 @@ HEADERS  += ../QHotkey/QHotkey \
 
 SOURCES += ../QHotkey/qhotkey.cpp
 win32: SOURCES += ../QHotkey/qhotkey_win.cpp
-#mac:   SOURCES += ../QHotkey/qhotkey_mac.cpp
-#linux: SOURCES += ../QHotkey/qhotkey_x11.cpp
+unix:macx:SOURCES += ../QHotkey/qhotkey_mac.cpp
+unix:!macx:SOURCES += ../QHotkey/qhotkey_x11.cpp
 
 #------------------------------------------------------
 
