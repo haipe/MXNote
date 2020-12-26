@@ -226,7 +226,7 @@ void MXNote::load()
         QString all = file.readAll();
         qDebug() << all;
         QJsonParseError jsonError;
-        QJsonDocument doucment = QJsonDocument::fromJson(all.toLocal8Bit(), &jsonError);  // 转化为 JSON 文档
+        QJsonDocument doucment = QJsonDocument::fromJson(all.toUtf8(), &jsonError);  // 转化为 JSON 文档
         if (!doucment.isNull() && (jsonError.error == QJsonParseError::NoError))
         {
             if (doucment.isArray())
@@ -274,13 +274,13 @@ void MXNote::load_note()
         {
             //使用缓存的
             cacheFile.open(QFile::ReadOnly);
-            data = QString::fromLocal8Bit(cacheFile.readAll());
+            data = QString::fromUtf8(cacheFile.readAll());
         }
         else
         {
             QFile file(noteFolder + m_current_note_name + ".note");
             file.open(QFile::ReadOnly);
-            data = QString::fromLocal8Bit(file.readAll());
+            data = QString::fromUtf8(file.readAll());
             file.close();
         }
 
@@ -354,7 +354,14 @@ void MXNote::save_note(bool toCache)
 
         QString cache = ui.textEdit->toPlainText();
         file.open(QFile::WriteOnly);
-        file.write(cache.toLocal8Bit().data());
+
+        QTextStream streamFileOut(&file);
+        streamFileOut.setCodec("UTF-8");
+        streamFileOut << cache;
+        streamFileOut.flush();
+
+        streamFileOut.setGenerateByteOrderMark(true);
+
         file.close();
     }
     else
@@ -381,7 +388,14 @@ void MXNote::save_note(bool toCache)
             QString cache = ui.textEdit->toPlainText();
 
             file.open(QFile::WriteOnly);
-            file.write(cache.toLocal8Bit().data());
+
+            QTextStream streamFileOut(&file);
+            streamFileOut.setCodec("UTF-8");
+            streamFileOut << cache;
+            streamFileOut.flush();
+
+            streamFileOut.setGenerateByteOrderMark(true);
+
             file.close();
         }
     }
